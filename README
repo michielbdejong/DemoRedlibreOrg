@@ -16,4 +16,5 @@ Now run the following from this directory:
 
  * mv apache2.conf /etc/apache2/sites-available/default
  * mv * /var/www
+ * chown -R www-data /var/www
  * /etc/init.d/apache2 restart
