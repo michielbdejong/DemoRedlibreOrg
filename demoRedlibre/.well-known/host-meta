@@ -1,0 +1,11 @@
+{
+ "links":
+ {
+   "lrdd":
+   [
+     {
+       "template":"http://demo.redlibre.org/webfinger/?q={uri}"
+     }
+   ]
+ }
+}

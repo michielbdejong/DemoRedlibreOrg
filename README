@@ -1,0 +1,19 @@
+This is the code that makes up demo.redlibre.org. This is developed by me, by kind permission from redlibre.org, so if it's broken, then don't blame redlibre.org. :) To install it, get a debian lenny server (I got one at rackspace and can recommend them), run (for some reason apt-get update fails the first time for me):
+
+ * apt-get update
+ * apt-get upgrade
+ * apt-get update
+ * apt-get upgrade
+ * apt-get install apache2 libapache2-mod-php
+
+All of this, as well as what follows, has to be run as root, or with 'sudo' in front of it, obviously. Now run a2enmod to install the following modules:
+
+ * a2enmod mod_headers
+ * a2enmod mod_dav
+ * a2enmod mod_dav_fs
+
+Now run the following from this directory:
+
+ * mv apache2.conf /etc/apache2/sites-available/default
+ * mv * /var/www
+ * /etc/init.d/apache2 restart
