@@ -1,11 +1,10 @@
 {
- "links":
- {
-   "lrdd":
-   [
-     {
-       "template":"http://demo.redlibre.org/webfinger/?q={uri}"
-     }
+ "links": {
+   "lrdd": [
+     { "template":"http://demo.redlibre.org/webfinger/?q={uri}"}
+   ],
+   "register": [
+     { "template":"http://unhosted.redlibre.org/register.html?q={uri}&redirect_url={redirect_url}" }
    ]
  }
 }
