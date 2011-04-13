@@ -1,9 +1,18 @@
 <?php
 if(count($_POST)) {
 	if($_POST["pwd"]=="demo") {
-		$token = "dGVzdDpkYXZ0ZXN0";//the http basic auth string corresponding to test:davtest.
-		$dav = "demo.redlibre.org/webdav/".str_replace('@', '/', $_POST["user"])."/".$_POST["app"];
-		header("Location:http://".$_POST["uri"]."?dav=$dav&token=".$token);
+		$token = "dGVzdDpkYXZ0ZXN0";
+		list($userName, $userDomain) = explode("@", $_POST["user_name"]);
+		$davDir = "/var/www/unhosted/dav/$userDomain/$userName/".$_POST["scope"];
+		`if [ ! -d $davDir ] ; then mkdir $davDir ; fi`;
+		`echo "<LimitExcept OPTIONS HEAD GET>" > $davDir/.htaccess`;
+		`echo "  AuthType Basic" >> $davDir/.htaccess`;
+		`echo "  AuthName \"http://unhosted.org/spec/dav/0.1\"" >> $davDir/.htaccess`;
+		`echo "  Require valid-user" >> $davDir/.htaccess`;
+		`echo "  AuthUserFile $davDir/.htpasswd" >> $davDir/.htaccess`;
+		`echo "</LimitExcept>" >> $davDir/.htaccess`;
+		//`htpasswd -bc $davDir/.htaccess {$_POST["user_name"]} $token`;
+		header("Location:http://".$_POST["redirect_uri"]."?token=".$token);
 		echo "redirecting you back to the application.\n";
 	} else {
 		var_dump($_POST["pwd"]);
@@ -24,11 +33,11 @@ if(count($_POST)) {
 <link rel="stylesheet" href="/css/uncompressed/login.css" />
 </head>
 	<header>
-		<h1><strong>demo.redlibre.org </strong>Unhosted storage node</h1>
+		<h1><strong>dev.unhosted.org </strong>Unhosted storage node</h1>
 	</header>
 	<body>
 		<div class="content">
-			<h2>The app '<?=$_GET["client_id"] ?>' is requesting access to your unhosted account</h2>
+			<h2>The app '<?=$_GET["client_id"] ?>' wants to read and write the <?=$_GET["scope"]?> data in your unhosted account</h2>
 			<form method="post" action="">
 				<label>Username:</label><span class="username"><?=$_GET["user_name"]?></span>	
 				<label for="password">Password:</label>
@@ -36,10 +45,9 @@ if(count($_POST)) {
 					<form method="POST" action="?">
 					<input type="password" name="pwd" value="" />
 					<input type="submit" name="submit" value="Allow" />
-					<input type="hidden" value="<?=$_GET["user_name"]?>" name="user">
-					<input type="hidden" value="<?=$_GET["user_domain"]?>" name="domain">
-					<input type="hidden" value="<?=$_GET["client_id"]?>" name="app">
-					<input type="hidden" value="<?=$_GET["redirect_uri"]?>" name="uri">
+					<input type="hidden" value="<?=$_GET["user_name"]?>" name="user_name">
+					<input type="hidden" value="<?=$_GET["scope"]?>" name="scope">
+					<input type="hidden" value="<?=$_GET["redirect_uri"]?>" name="redirect_uri">
 					</form>
 				</div>
 			</form>	
