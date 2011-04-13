@@ -18,16 +18,15 @@ If you hadn't downloaded this repository onto your server yet, do so now:
 
 Now, if your domain is called 'my.domain.org', then run the following from this directory to put in the right domainname:
 
- * htpasswd -b -c passwd.dav demo@my.domain.org dGVzdDpkYXZ0ZXN0
- * sed -i -e 's/demo.redlibre.org/my.domain.org/g' apache2.conf
- * sed -i -e 's/demo.redlibre.org/my.domain.org/g' .well-known/host-meta 
- * sed -i -e 's/demo.redlibre.org/my.domain.org/g' demoRedlibre/webfinger/index.html
- * sed -i -e 's/demo.redlibre.org/my.domain.org/g' demoRedlibre/oauth2/auth/index.php
- * mv davDemoRedlibre/files/demo.redlibre.org davDemoRedlibre/files/my.domain.org
+ * sed -i -e 's/dev.unhosted.org/my.domain.org/g' apache2.conf
+ * sed -i -e 's/dev.unhosted.org/my.domain.org/g' unhosted/html/.well-known/host-meta 
+ * sed -i -e 's/dev.unhosted.org/my.domain.org/g' unhosted/html/webfinger/index.html
+ * sed -i -e 's/dev.unhosted.org/my.domain.org/g' unhosted/html/oauth2/auth/index.php
+ * mkdir -p unhosted/dav/my.domain.org/demo
 
 Now put everything into place, chown the web content, and restart apache:
 
  * mv apache2.conf /etc/apache2/sites-available/default
- * mv * /var/www
+ * mv unhosted/ /var/www
  * chown -R www-data /var/www
  * /etc/init.d/apache2 restart
