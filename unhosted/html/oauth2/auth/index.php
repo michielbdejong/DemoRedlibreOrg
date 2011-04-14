@@ -1,8 +1,9 @@
 <?php
 if(count($_POST)) {
-	if($_POST["pwd"]=="demo") {
+	list($userName, $userDomain) = explode("@", $_POST["user_name"]);
+	$pwdFile = "/var/www/unhosted/dav/$userDomain/$userName/.htpasswd";
+	if(file_exists($pwdFile) && sha1($_POST["pwd"])==file_get_contents($pwdFile)) {
 		$token = "dGVzdDpkYXZ0ZXN0";
-		list($userName, $userDomain) = explode("@", $_POST["user_name"]);
 		$davDir = "/var/www/unhosted/dav/$userDomain/$userName/".$_POST["scope"];
 		`if [ ! -d $davDir ] ; then mkdir $davDir ; fi`;
 		`echo "<LimitExcept OPTIONS HEAD GET>" > $davDir/.htaccess`;
@@ -15,7 +16,7 @@ if(count($_POST)) {
 		header("Location:http://".$_POST["redirect_uri"]."?token=".$token);
 		echo "redirecting you back to the application.\n";
 	} else {
-		var_dump($_POST["pwd"]);
+		echo "Wrong password!";
 	}
 } else {
 ?>
