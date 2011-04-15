@@ -20,7 +20,7 @@ Now, if your domain is called 'my.domain.org', then run the following from this 
 
  * sed -i -e 's/dev.unhosted.org/my.domain.org/g' apache2.conf
  * sed -i -e 's/dev.unhosted.org/my.domain.org/g' unhosted/html/.well-known/host-meta 
- * sed -i -e 's/dev.unhosted.org/my.domain.org/g' unhosted/html/webfinger/index.html
+ * sed -i -e 's/dev.unhosted.org/my.domain.org/g' unhosted/html/webfinger/index.php
  * sed -i -e 's/dev.unhosted.org/my.domain.org/g' unhosted/html/oauth2/auth/index.php
  * mkdir -p unhosted/dav/my.domain.org/demo
 
