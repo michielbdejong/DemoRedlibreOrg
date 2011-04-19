@@ -1,21 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-
-<script src="html5.js"></script><!-- this is the javascript allowing html5 to run in older browsers -->
-
-<title>My Unhosted node</title>
-<link rel="stylesheet" href="css/uncompressed/reset.css" />
-<link rel="stylesheet" href="css/uncompressed/text.css" />
-<link rel="stylesheet" href="general.css" />
-<link rel="stylesheet" href="css/uncompressed/login.css" />
-</head>
-	<header>
-		<h1><strong>dev.unhosted.org </strong>Unhosted storage node</h1>
-	</header>
-	<body>
-
 <?php
 $showForm = true;
 $errorMsg="";
@@ -39,8 +21,7 @@ if($_POST["user_name"]) {
 }
 
 $userName = '';
-if(isset($_GET['user_name']) {
-	$userNamer
+if(isset($_GET['user_name'])) {
 	$userNameParts = explode('@', $_GET['user_name']);
 	if((count($userNameParts) != 2) || ($userNameParts[1] != 'dev.unhosted.org')) {
 		$errorMsg = 'Requested username '.$_GET['user_name'].' does not follow format <user>@dev.unhosted.org, please retry.';
@@ -50,6 +31,24 @@ if(isset($_GET['user_name']) {
 }
 if($showForm) {
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+<script src="html5.js"></script><!-- this is the javascript allowing html5 to run in older browsers -->
+
+<title>My Unhosted node</title>
+<link rel="stylesheet" href="css/uncompressed/reset.css" />
+<link rel="stylesheet" href="css/uncompressed/text.css" />
+<link rel="stylesheet" href="general.css" />
+<link rel="stylesheet" href="css/uncompressed/login.css" />
+</head>
+	<header>
+		<h1><strong>dev.unhosted.org </strong>Unhosted storage node</h1>
+	</header>
+	<body>
+
 	<H2>Welcome developer of unhosted web apps!</H2>
 	You can register here for a free test account, so you can quickly test and debug your unhosted web app.
 	<H3><strong><?= $errorMsg ?></strong></H3>
