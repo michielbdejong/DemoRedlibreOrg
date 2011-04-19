@@ -40,12 +40,20 @@ if($_POST["user_name"]) {
 if($showForm) {
 ?>
 	<H2>Welcome developer of unhosted web apps!</H2>
-	You can register here for a free test account. DO NOT use it for production purposes, as it's not hardened or throttled, it's backed up and it can go down. Check in the #unhosted channel on irc.freenode.net to know what's going on.
+	You can register here for a free test account, so you can quickly test and debug your unhosted web app.
+	<H3><strong><?= $errorMsg ?></strong></H3>
 	<form method="POST" target="?">
-	Username [a-z0-9]: <input name="user_name" type="text">@dev.unhosted.org<br>
-	Password: <input name="pwd" type="password"><br>
-	Repeat password: <input name="pwd2" type="password"><br>
+	<table>
+	<tr><td align="right">Nick:</td><td align="left">
+		<input name="user_name" type="text">@dev.unhosted.org</td></tr>
+	<tr><td align="right">Password:</td><td align="left">
+		<input name="pwd" type="password"></td></tr>
+	<tr><td align="right">Repeat:</td><td align="left">
+		<input name="pwd2" type="password"></td></tr>
+	<tr><td></td><td align="left">
 	<input type="submit">
+	</td></tr>
+	</table>
 	</form>
 
 <?php
