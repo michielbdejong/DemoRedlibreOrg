@@ -1,10 +1,13 @@
 <?php
+
+require_once('../../unhosted_includes/init.php');
+
 if(count($_POST)) {
 	list($userName, $userDomain) = explode("@", $_POST["user_name"]);
-	$pwdFile = "/var/www/unhosted/dav/$userDomain/$userName/.htpasswd";
+	$pwdFile = UnhostedSettings::davDir . "$userDomain/$userName/.htpasswd";
 	if(file_exists($pwdFile) && sha1($_POST["pwd"])==file_get_contents($pwdFile)) {
 		$token = base64_encode(mt_rand());
-		$davDir = "/var/www/unhosted/dav/$userDomain/$userName/".$_POST["scope"];
+		$davDir = UnhostedSettings::davDir . "$userDomain/$userName/".$_POST["scope"];
 		`if [ ! -d $davDir ] ; then mkdir $davDir ; fi`;
 		`echo "<LimitExcept OPTIONS HEAD GET>" > $davDir/.htaccess`;
 		`echo "  AuthType Basic" >> $davDir/.htaccess`;
@@ -13,7 +16,7 @@ if(count($_POST)) {
 		`echo "  AuthUserFile $davDir/.htpasswd" >> $davDir/.htaccess`;
 		`echo "</LimitExcept>" >> $davDir/.htaccess`;
 		`htpasswd -bc $davDir/.htpasswd {$_POST["user_name"]} $token`;
-		header("Location:http://".$_POST["redirect_uri"]."?token=".$token);
+		header("Location:".$_POST["redirect_uri"]."?token=".$token);
 		echo "redirecting you back to the application.\n";
 	} else {
 		echo "Wrong password!";
@@ -34,7 +37,7 @@ if(count($_POST)) {
 <link rel="stylesheet" href="/css/uncompressed/login.css" />
 </head>
 	<header>
-		<h1><strong>dev.unhosted.org </strong>Unhosted storage node</h1>
+		<h1><strong><?php echo UnhostedSettings::domain ?> </strong>Unhosted storage node</h1>
 	</header>
 	<body>
 		<div class="content">
