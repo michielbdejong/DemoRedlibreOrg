@@ -1,4 +1,7 @@
 <?php
+
+require_once('unhosted_includes/init.php');
+
 $showForm = true;
 $errorMsg="";
 if($_POST["user_name"]) {
@@ -6,7 +9,7 @@ if($_POST["user_name"]) {
 		if(!ctype_alnum($_POST["user_name"])) {
 			$errorMsg = "please use only alphanumeric characters in your username";
 		} else {
-			$userDir = "/var/www/unhosted/dav/dev.unhosted.org/".strtolower($_POST["user_name"]);
+			$userDir = UnhostedSettings::davDir . UnhostedSettings::domain . '/' . strtolower($_POST["user_name"]);
 			if(is_dir($userDir)) {
 				$errorMsg = "user name taken";
 			} else {//create the user
@@ -23,8 +26,8 @@ if($_POST["user_name"]) {
 $userName = '';
 if(isset($_GET['user_name'])) {
 	$userNameParts = explode('@', $_GET['user_name']);
-	if((count($userNameParts) != 2) || ($userNameParts[1] != 'dev.unhosted.org')) {
-		$errorMsg = 'Requested username '.$_GET['user_name'].' does not follow format <user>@dev.unhosted.org, please retry.';
+	if((count($userNameParts) != 2) || ($userNameParts[1] != UnhostedSettings::domain)) {
+		$errorMsg = 'Requested username '.$_GET['user_name'].' does not follow format <user>@' . UnhostedSettings::domain . ', please retry.';
 	} else {
 		$userName = $userNameParts[0];
 	}
@@ -45,7 +48,7 @@ if($showForm) {
 <link rel="stylesheet" href="css/uncompressed/login.css" />
 </head>
 	<header>
-		<h1><strong>dev.unhosted.org </strong>Unhosted storage node</h1>
+		<h1><strong><?=UnhostedSettings::domain?> </strong>Unhosted storage node</h1>
 	</header>
 	<body>
 
@@ -55,7 +58,7 @@ if($showForm) {
 	<form method="POST" target="?">
 	<table>
 	<tr><td align="right">Nick:</td><td align="left">
-		<input name="user_name" type="text" value="<?= $userName ?>">@dev.unhosted.org</td></tr>
+		<input name="user_name" type="text" value="<?= $userName ?>">@<?=UnhostedSettings::domain?></td></tr>
 	<tr><td align="right">Password:</td><td align="left">
 		<input name="pwd" type="password"></td></tr>
 	<tr><td align="right">Repeat:</td><td align="left">
@@ -72,27 +75,34 @@ if($showForm) {
 } else if((isset($_POST['redirect_url'])) && (strlen($_POST['redirect_url']))) { 
 	if((isset($_POST['scope'])) && (strlen($_POST['scope']))) {//have all the info to oauth you directly, so do that: 
 		$userName = $_POST['user_name'];
-		$userDomain = 'dev.unhosted.org';
+		$userDomain = UnhostedSettings::domain;
 		$token = base64_encode(mt_rand());
-		$davDir = "/var/www/unhosted/dav/$userDomain/$userName/".$_POST["scope"];
-		`if [ ! -d $davDir ] ; then mkdir $davDir ; fi`;
-		`echo "<LimitExcept OPTIONS HEAD GET>" > $davDir/.htaccess`;
-		`echo "  AuthType Basic" >> $davDir/.htaccess`;
-		`echo "  AuthName \"http://unhosted.org/spec/dav/0.1\"" >> $davDir/.htaccess`;
-		`echo "  Require valid-user" >> $davDir/.htaccess`;
-		`echo "  AuthUserFile $davDir/.htpasswd" >> $davDir/.htaccess`;
-		`echo "</LimitExcept>" >> $davDir/.htaccess`;
-		`htpasswd -bc $davDir/.htpasswd {$_POST['user_name']} $token`;
-		header('Location:http://'.$_POST['redirect_uri'].'?token='.$token.'&user_name='.$userName.'@'.$userDomain);//giving the token and user name back this way is not part of the Unhosted WebDAV spec
+		$davDir = UnhostedSettings::davDir . "$userDomain/$userName/".$_POST["scope"];
+
+		if(!file_exists($davDir)) {
+			mkdir($davDir);
+		}
+
+		$htaccessContent = '<LimitExcept OPTIONS HEAD GET>
+  AuthType Basic
+  AuthName "http://unhosted.org/spec/dav/0.1"
+  Require valid-user
+  AuthUserFile /var/www/tabulatabs.com/dav/tabulatabs.com/343max/tabulatabs.com/.htpasswd
+</LimitExcept>';
+
+		file_put_contents($davDir . '/.htaccess', $htaccessContent);
+
+		`htpasswd -bc $davDir/.htpasswd $userName $token`;
+		header('Location:'.$_POST['redirect_uri'].'?token='.$token.'&user_name='.$userName.'@'.$userDomain);//giving the token and user name back this way is not part of the Unhosted WebDAV spec
 		echo "redirecting you back to the application, already logged in.\n";
 	} else { //redirect you back to the app so you can log in:
-		header("Location:http://".$_POST["redirect_uri"].'?user_name='.$userName.'@'.$userDomain);//giving the user name back this way is not part of the Unhosted WebDAV spec
+		header("Location:".$_POST["redirect_uri"].'?user_name='.$userName.'@'.$userDomain);//giving the user name back this way is not part of the Unhosted WebDAV spec
 		echo "redirecting you back to the application, so you can log in.\n";
 	}
 } else {
 ?>
 	<H2>Thank you!</H2>
-	You now have an unhosted account at <?=$_POST["user_name"]?>@dev.unhosted.org. <a onclick="window.location=<?=$_GET["redirect_url"]?>;>Click here to return to the app you were logging into.</a>
+	You now have an unhosted account at <?=$_POST["user_name"]?>@<?=UnhostedSettings::domain?>. <a onclick="window.location='<?=$_GET["redirect_url"]?>';">Click here to return to the app you were logging into.</a>
 
 <?php
 }
